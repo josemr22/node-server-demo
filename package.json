@@ -1,0 +1,13 @@
+{
+  "name": "azure-functions-demo",
+  "version": "1.0.0",
+  "description": "Basic Azure Functions demo",
+  "scripts": {
+    "start": "func start",
+    "dev": "func start"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "azure-functions-core-tools": "^4.x"
+  }
+}
