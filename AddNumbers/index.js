@@ -9,7 +9,19 @@ module.exports = async function (context, req) {
     return;
   }
 
-  const sum = a + b;
+  // Convert to numbers and validate
+  const numA = Number(a);
+  const numB = Number(b);
+
+  if (isNaN(numA) || isNaN(numB)) {
+    context.res = {
+      status: 400,
+      body: { error: 'a and b must be valid numbers' }
+    };
+    return;
+  }
+
+  const sum = numA + numB;
   const formatted = sum.toFixed(2);
   const ratio = 1 / sum;
   const pow = Math.pow(sum, 1000);
