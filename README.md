@@ -8,7 +8,7 @@ Azure Functions project with HTTP endpoints.
 |--------|-------|-------------|
 | POST | `/api/items` | Create item |
 | GET | `/api/items` | Get all items |
-| POST | `/api/add` | Add two numbers |
+| POST | `/api/order` | Process order with items |
 
 ## Run
 
@@ -16,21 +16,28 @@ Azure Functions project with HTTP endpoints.
 func start
 ```
 
-## Test Add Numbers
+## Test Order
 
 ```bash
-curl -X POST http://localhost:7071/api/add \
+curl -X POST http://localhost:7071/api/order \
   -H "Content-Type: application/json" \
-  -d '{"a": 5, "b": 3}'
+  -d '{
+    "items": [
+      { "price": 100, "qty": 2, "category": "electronics", "user": { "name": "john" } },
+      { "price": 50, "qty": 3, "category": "books" }
+    ]
+  }'
 ```
 
-## Error Scenarios (for App Insights testing)
+## Bugs (to be fixed later)
 
-These intentionally cause unhandled errors to trigger Azure Monitor alerts:
+Real bugs in the code that cause unhandled errors:
 
-| Input | Error |
-|------|-------|
-| `{"a": "5", "b": 3}` | `TypeError: "53".toFixed is not a function` (string concatenation) |
-| `{"a": 0, "b": 0}` | `RangeError: 1/0` - division by zero |
-| `{"a": -5, "b": 0}` | `RangeError: Math.log(-5)` - logarithm of negative |
-| `{"a": 1000, "b": 1000}` | `RangeError: Math.pow(2000, 1000)` - exponent overflow |
+| Input | Error | Cause |
+|------|-------|-------|
+| `{}` | `TypeError: Cannot read property 'reduce' of undefined` | Missing `items` array |
+| `{"items": []}` | `TypeError: Cannot read property 'user' of undefined` | `items[0].user` is undefined |
+| `{"items": [{...}]}` | `TypeError: items[items.length]` | Access beyond array bounds |
+| `{"items": [{..., "user": "string"}]}` | `TypeError: user.name.toUpperCase` | `user` is string, not object |
+| `{"items": [{..., "category": 123}]}` | `TypeError: category.filter` | `category` is number, not array |
+| Empty array | `TypeError: uniqueCategories.filter` | No items → category is undefined |
